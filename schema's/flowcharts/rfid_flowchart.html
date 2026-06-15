@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RFID Scanner – Flowchart</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;600&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d1117;
+      --surface:   #161b22;
+      --border:    #21262d;
+      --accent:    #39d353;
+      --accent-dim:#1a5c28;
+      --text:      #e6edf3;
+      --muted:     #7d8590;
+      --mono:      'Share Tech Mono', monospace;
+      --sans:      'Inter', sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2.5rem 1rem 4rem;
+    }
+
+    header {
+      width: 100%;
+      max-width: 960px;
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.25rem;
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+    }
+
+    header h1 {
+      font-family: var(--mono);
+      font-size: 1.35rem;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+    }
+
+    header p {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .badge {
+      margin-left: auto;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid var(--accent-dim);
+      border-radius: 4px;
+      padding: 0.2rem 0.55rem;
+      white-space: nowrap;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 960px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2rem;
+      overflow-x: auto;
+    }
+
+    .card-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Mermaid overrides */
+    .mermaid {
+      display: flex;
+      justify-content: center;
+    }
+
+    .mermaid svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    footer {
+      margin-top: 2.5rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>RFID_SCANNER.ino</h1>
+  <p>Program flowchart</p>
+  <span class="badge">ESP32 + MFRC522</span>
+</header>
+
+<div class="card">
+  <div class="card-label">// flowchart</div>
+  <div class="mermaid">
+flowchart TD
+    A([START]) --> B[Serial.begin 115200]
+    B --> C[initWiFi]
+    C --> C1[WiFi.begin\nSSID + password]
+    C1 --> C2{WiFi\nconnected?}
+    C2 -- No --> C3[Wait 500 ms] --> C2
+    C2 -- Yes --> C4[Print IP · RSSI · MAC]
+    C4 --> D[initMQTTbroker]
+    D --> D1[setServer broker:1883]
+    D1 --> D2[setCallback → callback]
+    D2 --> E[SPI.begin]
+    E --> F[mfrc522.PCD_Init]
+    F --> G[Set 7-segment pins as OUTPUT]
+    G --> LOOP
+
+    subgraph LOOP [" loop() "]
+        L1{MQTT\nconnected?} -- No --> L2[mqttConnect]
+        L2 --> L2a{Connect OK?}
+        L2a -- Yes --> L2b[Publish hello\nSubscribe EscapeGame/Number]
+        L2a -- No --> L2c[Wait 5 s] --> L2
+        L2b --> L3
+        L1 -- Yes --> L3[mqttClient.loop\nprocess messages]
+        L3 --> L4[Prepare MIFARE key 0xFFFFFF]
+        L4 --> L5{New card\npresent?}
+        L5 -- No --> L1
+        L5 -- Yes --> L6{Read card\nserial OK?}
+        L6 -- No --> L1
+        L6 -- Yes --> L7[Authenticate block 1\nwith Key A]
+        L7 --> L8{Auth OK?}
+        L8 -- No --> L9[Print auth error] --> L1
+        L8 -- Yes --> L10[Read block 1 → buffer]
+        L10 --> L11{Read OK?}
+        L11 -- No --> L12[Print read error] --> L1
+        L11 -- Yes --> L13[Print 6 bytes to Serial]
+        L13 --> L14[Publish buffer to\nEscapeGame/ScannedCode]
+        L14 --> L15[Delay 1000 ms]
+        L15 --> L16[PICC_HaltA\nPCD_StopCrypto1]
+        L16 --> L1
+    end
+
+    subgraph CALLBACK [" callback() — triggered by incoming MQTT "]
+        CB1[Receive topic + message] --> CB2[Assemble message string]
+        CB2 --> CB3{Topic ==\nEscapeGame/Number?}
+        CB3 -- No --> CB_END([Return])
+        CB3 -- Yes --> CB4{Message\nvalue?}
+        CB4 -- 1 --> CB5[Display 1]
+        CB4 -- 2 --> CB6[Display 2]
+        CB4 -- 3 --> CB7[Display 3]
+        CB4 -- 4 --> CB8[Display 4]
+        CB4 -- 0 --> CB9[All segments OFF]
+        CB5 & CB6 & CB7 & CB8 & CB9 --> CB_END
+    end
+  </div>
+</div>
+
+<footer>// generated for EscapeGame_Groep16</footer>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      primaryColor: '#161b22',
+      primaryTextColor: '#e6edf3',
+      primaryBorderColor: '#39d353',
+      lineColor: '#39d353',
+      secondaryColor: '#0d1117',
+      tertiaryColor: '#21262d',
+      fontFamily: 'Share Tech Mono, monospace',
+      fontSize: '13px',
+      edgeLabelBackground: '#0d1117',
+      clusterBkg: '#0d1117',
+      clusterBorder: '#21262d',
+    }
+  });
+</script>
+</body>
+</html>

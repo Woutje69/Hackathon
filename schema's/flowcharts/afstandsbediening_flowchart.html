@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Afstandsbediening – Flowchart</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;600&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d1117;
+      --surface:   #161b22;
+      --border:    #21262d;
+      --accent:    #e3b341;
+      --accent-dim:#5a4510;
+      --text:      #e6edf3;
+      --muted:     #7d8590;
+      --mono:      'Share Tech Mono', monospace;
+      --sans:      'Inter', sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2.5rem 1rem 4rem;
+    }
+
+    header {
+      width: 100%;
+      max-width: 1000px;
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.25rem;
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    header h1 {
+      font-family: var(--mono);
+      font-size: 1.35rem;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+    }
+
+    header p {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .badge {
+      margin-left: auto;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid var(--accent-dim);
+      border-radius: 4px;
+      padding: 0.2rem 0.55rem;
+      white-space: nowrap;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 1000px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2rem;
+      overflow-x: auto;
+    }
+
+    .card-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 1.5rem;
+    }
+
+    .mermaid {
+      display: flex;
+      justify-content: center;
+    }
+
+    .mermaid svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    footer {
+      margin-top: 2.5rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>CODE_AFSTANDSBEDIENING.ino</h1>
+  <p>Program flowchart</p>
+  <span class="badge">ESP8266 + IR + OLED + Buzzer</span>
+</header>
+
+<div class="card">
+  <div class="card-label">// flowchart</div>
+  <div class="mermaid">
+flowchart TD
+    A([START]) --> B[Serial.begin 115200]
+    B --> C[initWiFi\nWiFi.begin SSID + password]
+    C --> C1{WiFi\nconnected?}
+    C1 -- No --> C2[Wait 500 ms] --> C1
+    C1 -- Yes --> D[initMQTTbroker\nsetServer + setCallback]
+    D --> E[Wire.begin SDA SCL]
+    E --> F[Reset OLED via GPIO16]
+    F --> G{display.begin\nSSD1306 OK?}
+    G -- No --> G1[Print error\nhalt forever]
+    G -- Yes --> H[Show Escape Room!\non OLED — 1.5 s]
+    H --> I[irrecv.enableIRIn]
+    I --> J[pinMode BUZZER OUTPUT\nanalogWriteRange 255]
+    J --> LOOP
+
+    subgraph LOOP [" loop() "]
+        L1{MQTT\nconnected?} -- No --> L2[mqttConnect]
+        L2 --> L2a{Connect OK?}
+        L2a -- Yes --> L2b[Publish hello\nSubscribe EscapeGame/Correct]
+        L2a -- No --> L2c[Wait 5 s] --> L2
+        L2b --> L3
+        L1 -- Yes --> L3[mqttClient.loop]
+        L3 --> L4[updateBuzzer\nadvance melody non-blocking]
+        L4 --> L5{waitingForServer?}
+        L5 -- Yes --> L_disp[updateDisplay\nyield] --> L1
+        L5 -- No --> L6{IR signal\nreceived?}
+        L6 -- No --> L_disp
+        L6 -- Yes --> L7[Read code\nirrecv.resume]
+        L7 --> L8{code valid?\nnot 0 / 0xFFFFFFFF}
+        L8 -- No --> L_disp
+        L8 -- Yes --> L9[irCodeToDigit\nlook up in IR_CODES array]
+        L9 --> L10{Digit\nrecognised?}
+        L10 -- No --> L11[Print unknown code] --> L_disp
+        L10 -- Yes --> L12{enteredCount\n< 4?}
+        L12 -- No --> L_disp
+        L12 -- Yes --> L13[Store digit\nenteredCount++\nupdateDisplay]
+        L13 --> L14{enteredCount\n== 4?}
+        L14 -- No --> L_disp
+        L14 -- Yes --> L15[waitingForServer = true\nDelay 300 ms]
+        L15 --> L16[Build payload\n d0 d1 d2 d3]
+        L16 --> L17[Publish payload\nto EscapeGame/Code]
+        L17 --> L_disp
+    end
+
+    subgraph CALLBACK [" callback() — triggered by incoming MQTT "]
+        CB1[Receive topic + message] --> CB2{Topic ==\nEscapeGame/Correct?}
+        CB2 -- No --> CB_END([Return])
+        CB2 -- Yes --> CB3[waitingForServer = false]
+        CB3 --> CB4{Message\nvalue?}
+        CB4 -- 1 correct --> CB5[startMelody correctNotes\nDelay 3 s\nenteredCount = 0]
+        CB4 -- 0 wrong --> CB6[startMelody wrongNotes\nenteredCount = 0]
+        CB5 & CB6 --> CB_END
+    end
+
+    subgraph BUZZER [" updateBuzzer() — non-blocking melody "]
+        UB1{currentMelody\n== nullptr?} -- Yes --> UB_END([Return])
+        UB1 -- No --> UB2{Note duration\nelapsed?}
+        UB2 -- No --> UB_END
+        UB2 -- Yes --> UB3[melodyIndex++]
+        UB3 --> UB4{End of\nmelody?}
+        UB4 -- Yes --> UB5[stopTone\ncurrentMelody = nullptr] --> UB_END
+        UB4 -- No --> UB6[noteStartTime = millis\nplayTone next note] --> UB_END
+    end
+  </div>
+</div>
+
+<footer>// generated for EscapeGame_Groep16</footer>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      primaryColor:        '#161b22',
+      primaryTextColor:    '#e6edf3',
+      primaryBorderColor:  '#e3b341',
+      lineColor:           '#e3b341',
+      secondaryColor:      '#0d1117',
+      tertiaryColor:       '#21262d',
+      fontFamily:          'Share Tech Mono, monospace',
+      fontSize:            '13px',
+      edgeLabelBackground: '#0d1117',
+      clusterBkg:          '#0d1117',
+      clusterBorder:       '#21262d',
+    }
+  });
+</script>
+</body>
+</html>

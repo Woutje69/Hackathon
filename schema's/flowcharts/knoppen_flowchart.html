@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Knoppen – Flowchart</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;600&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d1117;
+      --surface:   #161b22;
+      --border:    #21262d;
+      --accent:    #58a6ff;
+      --accent-dim:#1158a8;
+      --text:      #e6edf3;
+      --muted:     #7d8590;
+      --mono:      'Share Tech Mono', monospace;
+      --sans:      'Inter', sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2.5rem 1rem 4rem;
+    }
+
+    header {
+      width: 100%;
+      max-width: 960px;
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.25rem;
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    header h1 {
+      font-family: var(--mono);
+      font-size: 1.35rem;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+    }
+
+    header p {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .badge {
+      margin-left: auto;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid var(--accent-dim);
+      border-radius: 4px;
+      padding: 0.2rem 0.55rem;
+      white-space: nowrap;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 960px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2rem;
+      overflow-x: auto;
+    }
+
+    .card-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 1.5rem;
+    }
+
+    .mermaid {
+      display: flex;
+      justify-content: center;
+    }
+
+    .mermaid svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    footer {
+      margin-top: 2.5rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>CODE_KNOPPEN.ino</h1>
+  <p>Program flowchart</p>
+  <span class="badge">ESP32 + 4 Buttons + 4 LEDs</span>
+</header>
+
+<div class="card">
+  <div class="card-label">// flowchart</div>
+  <div class="mermaid">
+flowchart TD
+    A([START]) --> B[Serial.begin 115200]
+    B --> C[initWiFi]
+    C --> C1[WiFi.begin\nSSID + password]
+    C1 --> C2{WiFi\nconnected?}
+    C2 -- No --> C3[Wait 500 ms] --> C2
+    C2 -- Yes --> C4[Print IP · RSSI · MAC]
+    C4 --> D[initMQTTbroker]
+    D --> D1[setServer broker:1883]
+    D1 --> E[Set 4 buttons as INPUT_PULLUP]
+    E --> F[Set 4 LEDs as OUTPUT]
+    F --> LOOP
+
+    subgraph LOOP [" loop() "]
+        L1{MQTT\nconnected?} -- No --> L2[mqttConnect]
+        L2 --> L2a{Connect OK?}
+        L2a -- Yes --> L2b[Flash green LED\nPublish hello]
+        L2a -- No --> L2c[Wait 5 s] --> L2
+        L2b --> L3
+        L1 -- Yes --> L3[mqttClient.loop\nprocess messages]
+        L3 --> L4[i = 0]
+        L4 --> L5{i < 4?}
+        L5 -- No --> L8
+        L5 -- Yes --> L6{Button i\npressed?\ndigitalRead == LOW}
+        L6 -- No --> L7[i++] --> L5
+        L6 -- Yes --> L6a{LED i\nalready ON?}
+        L6a -- Yes --> L7
+        L6a -- No --> L6b[Turn LED i ON\nAppend color to strVolgorde\nteller++]
+        L6b --> L6c[Print strVolgorde\nDelay 50 ms]
+        L6c --> L7
+        L8[Delay 200 ms] --> L9{teller == 4?}
+        L9 -- Yes --> L10[Publish strVolgorde\nto EscapeGame/Volgorde]
+        L10 --> L11[Reset teller = 0\nClear strVolgorde\nTurn ALL LEDs OFF]
+        L11 --> L1
+        L9 -- No --> L12{teller > 4?}
+        L12 -- Yes --> L13[Turn ALL LEDs OFF] --> L1
+        L12 -- No --> L1
+    end
+  </div>
+</div>
+
+<footer>// generated for EscapeGame_Groep16</footer>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+      primaryColor:        '#161b22',
+      primaryTextColor:    '#e6edf3',
+      primaryBorderColor:  '#58a6ff',
+      lineColor:           '#58a6ff',
+      secondaryColor:      '#0d1117',
+      tertiaryColor:       '#21262d',
+      fontFamily:          'Share Tech Mono, monospace',
+      fontSize:            '13px',
+      edgeLabelBackground: '#0d1117',
+      clusterBkg:          '#0d1117',
+      clusterBorder:       '#21262d',
+    }
+  });
+</script>
+</body>
+</html>

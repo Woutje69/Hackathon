@@ -1,0 +1,1140 @@
+[
+    {
+        "id": "23e9aa8649696eec",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "122fb1b19da0d76a",
+        "type": "group",
+        "z": "23e9aa8649696eec",
+        "name": "Scanner",
+        "style": {
+            "label": true
+        },
+        "nodes": [
+            "4c1ca1ff7097842f",
+            "d73417d7e76f9bb0",
+            "5214a476a8b2350d",
+            "4a829102c11318f0",
+            "f6a7bbaf46762249",
+            "58dad72c796ecef9",
+            "4a7c69189dc88997",
+            "e2433722dbea0d07"
+        ],
+        "x": 1234,
+        "y": 59,
+        "w": 772,
+        "h": 302
+    },
+    {
+        "id": "08957a2d8ea491d8",
+        "type": "group",
+        "z": "23e9aa8649696eec",
+        "name": "Knoppen",
+        "style": {
+            "label": true
+        },
+        "nodes": [
+            "fe03a744f59597ed",
+            "abed4ce61c5528c8",
+            "3995a2ec53a7429c",
+            "9da4cee20d36bdc8",
+            "2d413eebc65b31b1",
+            "52cdc80a9316ea26",
+            "b618eb4c277440fd",
+            "42040651511fe8fd"
+        ],
+        "x": 1234,
+        "y": 419,
+        "w": 732,
+        "h": 322
+    },
+    {
+        "id": "a96f0daf3808e6ae",
+        "type": "group",
+        "z": "23e9aa8649696eec",
+        "name": "Genereren codes",
+        "style": {
+            "label": true
+        },
+        "nodes": [
+            "c5b2bbed53dae51c",
+            "1fd9169e26f69263",
+            "532e067d72cdd998",
+            "047f55a97bd5ea2e",
+            "61eee6a04e247917",
+            "76db2ef9be6e1135",
+            "06f041a8dcd169d6"
+        ],
+        "x": 114,
+        "y": 79,
+        "w": 932,
+        "h": 242
+    },
+    {
+        "id": "1d2bc8bc812c9d02",
+        "type": "group",
+        "z": "23e9aa8649696eec",
+        "name": "Spel controle",
+        "style": {
+            "label": true
+        },
+        "nodes": [
+            "0360f5bf1e2b6d0c",
+            "574ef551be337391",
+            "06d67a037ff7c1c0",
+            "5f1b4774be01ca52",
+            "ac1de084e76ee34f",
+            "d7d4d44905431b30",
+            "9b8fdcb3b185bd79",
+            "e007622b940fc347"
+        ],
+        "x": 114,
+        "y": 419,
+        "w": 912,
+        "h": 182
+    },
+    {
+        "id": "8812635f38fc5340",
+        "type": "group",
+        "z": "23e9aa8649696eec",
+        "name": "Cijfercode input",
+        "style": {
+            "label": true
+        },
+        "nodes": [
+            "c6376863b4ac8204",
+            "0470100597a94ce6",
+            "1d78101e0ca95dfc",
+            "957de4824211eba9",
+            "c1b4d1a55be4b6dd",
+            "01bf3b2ea7b58187",
+            "a150202dcad42c75"
+        ],
+        "x": 274,
+        "y": 719,
+        "w": 752,
+        "h": 182
+    },
+    {
+        "id": "4c1ca1ff7097842f",
+        "type": "mqtt in",
+        "z": "23e9aa8649696eec",
+        "g": "122fb1b19da0d76a",
+        "name": "ScannedCode",
+        "topic": "EscapeGame/ScannedCode",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "c139a550b0335ad1",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 1330,
+        "y": 160,
+        "wires": [
+            [
+                "d73417d7e76f9bb0",
+                "5214a476a8b2350d",
+                "58dad72c796ecef9"
+            ]
+        ]
+    },
+    {
+        "id": "d73417d7e76f9bb0",
+        "type": "debug",
+        "z": "23e9aa8649696eec",
+        "g": "122fb1b19da0d76a",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1580,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "5214a476a8b2350d",
+        "type": "function",
+        "z": "23e9aa8649696eec",
+        "g": "122fb1b19da0d76a",
+        "name": "controleer nummer",
+        "func": "if(global.get(\"started\")) {\n    let colour = msg.payload;\n    msg.topic = \"EscapeGame/Number\";\n    let kleurcode = global.get(\"kleurcode\");\n\n    msg.payload = kleurcode.indexOf(\"ROOD\") + 1;\n\n    if(colour.includes(\"ROOD\")) {\n        msg.payload = kleurcode.indexOf(\"ROOD\")+1;\n        return msg;\n    }\n    else if(colour.includes(\"BLAUW\")) {\n        msg.payload = kleurcode.indexOf(\"BLAUW\")+1;\n        return msg;\n    }\n    else if(colour.includes(\"GROEN\")) {\n        msg.payload = kleurcode.indexOf(\"GROEN\")+1;\n        return msg;\n    }\n    else if(colour.includes(\"GEEL\")) {\n        msg.payload = kleurcode.indexOf(\"GEEL\")+1;\n        return msg;\n    }\n    else {\n        msg.payload = 0;\n        return msg;\n    }\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1610,
+        "y": 160,
+        "wires": [
+            [
+                "4a829102c11318f0",
+                "f6a7bbaf46762249",
+                "e2433722dbea0d07"
+            ]
+        ]
+    },
+    {
+        "id": "c5b2bbed53dae51c",
+        "type": "ui_button",
+        "z": "23e9aa8649696eec",
+        "g": "a96f0daf3808e6ae",
+        "name": "Genereer random codes",
+        "group": "51ccaa608b3719c2",
+        "order": 2,
+        "width": "6",
+        "height": "1",
+        "passthru": true,
+        "label": "Genereer random codes",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 250,
+        "y": 200,
+        "wires": [
+            [
+                "1fd9169e26f69263",
+                "61eee6a04e247917"
+            ]
+        ]
+    },
+    {
+        "id": "0360f5bf1e2b6d0c",
+        "type": "ui_gauge",
+        "z": "23e9aa8649696eec",
+        "g": "1d2bc8bc812c9d02",
+        "name": "",
+        "group": "c81472527479036c",
+        "order": 1,
+        "width": "12",
+        "height": "6",
+        "gtype": "donut",
+        "title": "Tijd resterend",
+        "label": "Sec",
+        "format": "{{value}}",
+        "min": "0",
+        "max": "120",
+        "colors": [
+            "#b30000",
+            "#e6e600",
+            "#65cb3a"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 800,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "1fd9169e26f69263",
+        "type": "function",
+        "z": "23e9aa8649696eec",
+        "g": "a96f0daf3808e6ae",
+        "name": "Genereer random kleurenvolgorde",
+        "func": "let alleKleuren = [\"ROOD\", \"BLAUW\", \"GROEN\", \"GEEL\"];\nlet kleurenCode = [\"?\", \"?\", \"?\", \"?\"];\n\nfor (let index = 0; index < 4; index++) {\n    let randIndex = Math.floor(Math.random() * alleKleuren.length);\n    kleurenCode[index] = alleKleuren[randIndex];\n    alleKleuren.splice(randIndex, 1);\n}\n\nglobal.set(\"kleurcode\", kleurenCode);\nglobal.set(\"win\", false);\nmsg.payload = kleurenCode;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 620,
+        "y": 180,
+        "wires": [
+            [
+                "532e067d72cdd998",
+                "047f55a97bd5ea2e"
+            ]
+        ]
+    },
+    {
+        "id": "4a829102c11318f0",
+        "type": "debug",
+        "z": "23e9aa8649696eec",
+        "g": "122fb1b19da0d76a",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1880,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "f6a7bbaf46762249",
+        "type": "mqtt out",
+        "z": "23e9aa8649696eec",
+        "g": "122fb1b19da0d76a",
+        "name": "Send number",
+        "topic": "",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "c139a550b0335ad1",
+        "x": 1900,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "532e067d72cdd998",
+        "type": "debug",
+        "z": "23e9aa8649696eec",
+        "g": "a96f0daf3808e6ae",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 940,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "047f55a97bd5ea2e",
+        "type": "ui_text",
+        "z": "23e9aa8649696eec",
+        "g": "a96f0daf3808e6ae",
+        "group": "51ccaa608b3719c2",
+        "order": 1,
+        "width": "6",
+        "height": "1",
+        "name": "kleurcode",
+        "label": "Kleurcode:",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 940,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "574ef551be337391",
+        "type": "countdown",
+        "z": "23e9aa8649696eec",
+        "g": "1d2bc8bc812c9d02",
+        "name": "Timer",
+        "topic": "",
+        "payloadTimerStart": "true",
+        "payloadTimerStartType": "bool",
+        "payloadTimerStop": "false",
+        "payloadTimerStopType": "bool",
+        "timer": "120",
+        "resetWhileRunning": true,
+        "outputOnReset": true,
+        "setTimeToNewWhileRunning": true,
+        "startCountdownOnControlMessage": false,
+        "x": 470,
+        "y": 500,
+        "wires": [
+            [
+                "06d67a037ff7c1c0"
+            ],
+            [
+                "0360f5bf1e2b6d0c",
+                "5f1b4774be01ca52",
+                "9b8fdcb3b185bd79"
+            ]
+        ]
+    },
+    {
+        "id": "d7d4d44905431b30",
+        "type": "ui_text",
+        "z": "23e9aa8649696eec",
+        "g": "1d2bc8bc812c9d02",
+        "group": "c81472527479036c",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "name": "info",
+        "label": "Info:",
+        "format": "Druk de juiste knoppenvolgorde, om de afstandsbediening te activeren waar je de tijd met kan stoppen",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 950,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "06d67a037ff7c1c0",
+        "type": "ui_switch",
+        "z": "23e9aa8649696eec",
+        "g": "1d2bc8bc812c9d02",
+        "name": "start/stop spel",
+        "label": "start/stop spel",
+        "tooltip": "",
+        "group": "0df0ffa2a3c003a7",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "decouple": "true",
+        "topic": "topic",
+        "topicType": "msg",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "fa-power-off",
+        "oncolor": "green",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "fa-power-off",
+        "offcolor": "red",
+        "animate": true,
+        "className": "",
+        "x": 220,
+        "y": 500,
+        "wires": [
+            [
+                "574ef551be337391",
+                "ac1de084e76ee34f",
+                "c5b2bbed53dae51c"
+            ]
+        ]
+    },
+    {
+        "id": "5f1b4774be01ca52",
+        "type": "function",
+        "z": "23e9aa8649696eec",
+        "g": "1d2bc8bc812c9d02",
+        "name": "function 1",
+        "func": "if(msg.payload == false) {\n    if(global.get(\"win\") && global.get(\"started\")) {\n        msg.payload = \"Je hebt gewonnen, proficiat\";\n        return msg;\n    }\n    else {\n        msg.payload = \"Jammer, je hebt verloren.\";\n        return msg;\n    }\n}\nelse if(msg.payload == 60) {\n    msg.payload = \"Je hebt nog 60 seconden de tijd\";\n    return msg;\n}\nelse if(msg.payload == 119) {\n    if(global.get(\"foutecode\") && global.get(\"started\")) {\n        msg.payload = \"Foute code, begin volledig opnieuw\";\n    }\n    else if (!global.get(\"foutecode\")){\n        msg.payload = \"Spel gestart, vindt de juiste kleurcode\";\n    }\n    return msg;\n}\nelse return msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 780,
+        "y": 460,
+        "wires": [
+            [
+                "e007622b940fc347",
+                "02a5c3248f3b37b1"
+            ]
+        ]
+    },
+    {
+        "id": "61eee6a04e247917",
+        "type": "function",
+        "z": "23e9aa8649696eec",
+        "g": "a96f0daf3808e6ae",
+        "name": "Genereer random cijfercode",
+        "func": "let cijfercode = [0, 0, 0, 0];\nlet cijfer = 0;\n\nfor (let index = 0; index < cijfercode.length; index++) {\n    do {\n        cijfer = Math.floor(Math.random() * 9)+1;\n        cijfercode[index] = cijfer;\n    } while (index == 0 && cijfer == 0);\n}\n\nglobal.set(\"cijfercode\", cijfercode);\nglobal.set(\"foutecode\", false);\nmsg.payload = cijfercode;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 220,
+        "wires": [
+            [
+                "76db2ef9be6e1135",
+                "06f041a8dcd169d6"
+            ]
+        ]
+    },
+    {
+        "id": "76db2ef9be6e1135",
+        "type": "ui_text",
+        "z": "23e9aa8649696eec",
+        "g": "a96f0daf3808e6ae",
+        "group": "51ccaa608b3719c2",
+        "order": 1,
+        "width": "6",
+        "height": "1",
+        "name": "cijfercode",
+        "label": "Cijfercode:",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 940,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "06f041a8dcd169d6",
+        "type": "debug",
+        "z": "23e9aa8649696eec",
+        "g": "a96f0daf3808e6ae",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 940,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "58dad72c796ecef9",
+        "type": "ui_text",
+        "z": "23e9aa8649696eec",
+        "g": "122fb1b19da0d76a",
+        "group": "f012d9f3b34b7bc0",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Laatst gescand:",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 1600,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "4a7c69189dc88997",
+        "type": "delay",
+        "z": "23e9aa8649696eec",
+        "g": "122fb1b19da0d76a",
+        "name": "reset display after 3 sec",
+        "pauseType": "delay",
+        "timeout": "2",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1830,
+        "y": 320,
+        "wires": [
+            [
+                "f6a7bbaf46762249"
+            ]
+        ]
+    },
+    {
+        "id": "e2433722dbea0d07",
+        "type": "function",
+        "z": "23e9aa8649696eec",
+        "g": "122fb1b19da0d76a",
+        "name": "return 0",
+        "func": "msg.payload = 0;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1640,
+        "y": 320,
+        "wires": [
+            [
+                "4a7c69189dc88997"
+            ]
+        ]
+    },
+    {
+        "id": "ac1de084e76ee34f",
+        "type": "function",
+        "z": "23e9aa8649696eec",
+        "g": "1d2bc8bc812c9d02",
+        "name": "function 2",
+        "func": "if(msg.payload == true) {\n    global.set(\"started\", true);\n}\nelse if (msg.payload == false) {\n    global.set(\"started\", false);\n}",
+        "outputs": 0,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "fe03a744f59597ed",
+        "type": "mqtt in",
+        "z": "23e9aa8649696eec",
+        "g": "08957a2d8ea491d8",
+        "name": "ingedrukte volgorde",
+        "topic": "EscapeGame/Volgorde",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "c139a550b0335ad1",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 1350,
+        "y": 520,
+        "wires": [
+            [
+                "abed4ce61c5528c8"
+            ]
+        ]
+    },
+    {
+        "id": "abed4ce61c5528c8",
+        "type": "function",
+        "z": "23e9aa8649696eec",
+        "g": "08957a2d8ea491d8",
+        "name": "controlleer volgorde",
+        "func": "let volgorde = (msg.payload.trim()).split(\" \");\nlet kleurcode = global.get(\"kleurcode\");\nlet foutGespot = false;\n\nif(global.get(\"started\")) {    \n    for (let index = 0; index < 4; index++) {\n        if(volgorde[index] != kleurcode[index]) {\n            foutGespot = true;\n        }\n    }\n\n    if(!foutGespot) {\n        let cijfercode = global.get(\"cijfercode\");\n        msg.payload = \"Juiste volgorde, neem de afstandsbediening en geef de code in om de tijd te stoppen. De code is: \" + cijfercode[0] + \" \" + cijfercode[1] + \" \" + cijfercode[2] + \" \" + cijfercode[3] + \".\" + \" Wees snel. De code verdwijnt in 10. 9. 8. 7. 6. 5. 4. 3. 2. 1.\";\n        return msg; \n    }\n    else {\n        msg.payload = \"Foute volgorde, begin volledig opnieuw\";\n        return msg;\n    }\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1610,
+        "y": 520,
+        "wires": [
+            [
+                "3995a2ec53a7429c",
+                "9da4cee20d36bdc8",
+                "2d413eebc65b31b1",
+                "52cdc80a9316ea26",
+                "b618eb4c277440fd"
+            ]
+        ]
+    },
+    {
+        "id": "3995a2ec53a7429c",
+        "type": "debug",
+        "z": "23e9aa8649696eec",
+        "g": "08957a2d8ea491d8",
+        "name": "debug 6",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1860,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "9da4cee20d36bdc8",
+        "type": "function",
+        "z": "23e9aa8649696eec",
+        "g": "08957a2d8ea491d8",
+        "name": "function 3",
+        "func": "let input = msg.payload;\nif(input.startsWith(\"Fout\")) {\n    msg.payload = true;\n    return msg;\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1600,
+        "y": 460,
+        "wires": [
+            [
+                "c5b2bbed53dae51c"
+            ]
+        ]
+    },
+    {
+        "id": "2d413eebc65b31b1",
+        "type": "ui_text",
+        "z": "23e9aa8649696eec",
+        "g": "08957a2d8ea491d8",
+        "group": "c81472527479036c",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "name": "code",
+        "label": "Code:",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 1850,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "c6376863b4ac8204",
+        "type": "function",
+        "z": "23e9aa8649696eec",
+        "g": "8812635f38fc5340",
+        "name": "function 4",
+        "func": "let input = msg.payload;\nlet inputArr = (input.trim()).split(\" \");\nlet codeArr = global.get(\"cijfercode\");\nlet foutGespot = false;\n\nif(global.get(\"started\")) {\n\n    for (let index = 0; index < 4; index++) {\n        if(inputArr[index] != codeArr[index]) {\n            foutGespot = true;\n        }\n    }\n\n   \n    if(!foutGespot) {\n        msg.payload = false;\n        global.set(\"win\", true);\n        return msg;\n    }\n    else {\n        msg.payload = \"Foute volgorde, begin volledig opnieuw\";\n        global.set(\"foutecode\", true);\n        return msg;\n    }\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 560,
+        "y": 760,
+        "wires": [
+            [
+                "06d67a037ff7c1c0",
+                "957de4824211eba9",
+                "0470100597a94ce6",
+                "01bf3b2ea7b58187",
+                "9e923559b1562075",
+                "ce1b8674face71bd"
+            ]
+        ]
+    },
+    {
+        "id": "0470100597a94ce6",
+        "type": "function",
+        "z": "23e9aa8649696eec",
+        "g": "8812635f38fc5340",
+        "name": "function 5",
+        "func": "let input = msg.payload;\nif (input != false && input.startsWith(\"Fout\")) {\n    msg.payload = true;\n    return msg;\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 760,
+        "y": 760,
+        "wires": [
+            [
+                "1fd9169e26f69263",
+                "1fb1b12fe052de83"
+            ]
+        ]
+    },
+    {
+        "id": "1d78101e0ca95dfc",
+        "type": "debug",
+        "z": "23e9aa8649696eec",
+        "g": "8812635f38fc5340",
+        "name": "debug 7",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "957de4824211eba9",
+        "type": "debug",
+        "z": "23e9aa8649696eec",
+        "g": "8812635f38fc5340",
+        "name": "debug 8",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 760,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "c1b4d1a55be4b6dd",
+        "type": "mqtt in",
+        "z": "23e9aa8649696eec",
+        "g": "8812635f38fc5340",
+        "name": "Cijfercode",
+        "topic": "EscapeGame/Code",
+        "qos": "0",
+        "datatype": "utf8",
+        "broker": "c139a550b0335ad1",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 360,
+        "y": 760,
+        "wires": [
+            [
+                "c6376863b4ac8204",
+                "1d78101e0ca95dfc"
+            ]
+        ]
+    },
+    {
+        "id": "9b8fdcb3b185bd79",
+        "type": "ui_text",
+        "z": "23e9aa8649696eec",
+        "g": "1d2bc8bc812c9d02",
+        "group": "0df0ffa2a3c003a7",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "Tijd resterend admin",
+        "label": "Tijd:",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 820,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "e007622b940fc347",
+        "type": "ui_audio",
+        "z": "23e9aa8649696eec",
+        "g": "1d2bc8bc812c9d02",
+        "name": "",
+        "group": "c81472527479036c",
+        "voice": "Google Nederlands",
+        "always": true,
+        "x": 940,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "52cdc80a9316ea26",
+        "type": "ui_audio",
+        "z": "23e9aa8649696eec",
+        "g": "08957a2d8ea491d8",
+        "name": "",
+        "group": "c81472527479036c",
+        "voice": "Google Nederlands",
+        "always": true,
+        "x": 1860,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "02a5c3248f3b37b1",
+        "type": "debug",
+        "z": "23e9aa8649696eec",
+        "name": "debug 5",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 940,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "01bf3b2ea7b58187",
+        "type": "function",
+        "z": "23e9aa8649696eec",
+        "g": "8812635f38fc5340",
+        "name": "function 6",
+        "func": "if(msg.payload == false) {\n    msg.payload = \"1\";\n}\nelse {\n    msg.payload = \"0\";\n    global.set(\"foutecode\", true);\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 760,
+        "y": 800,
+        "wires": [
+            [
+                "a150202dcad42c75"
+            ]
+        ]
+    },
+    {
+        "id": "a150202dcad42c75",
+        "type": "mqtt out",
+        "z": "23e9aa8649696eec",
+        "g": "8812635f38fc5340",
+        "name": "Correct?",
+        "topic": "EscapeGame/Correct",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "c139a550b0335ad1",
+        "x": 940,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "1fb1b12fe052de83",
+        "type": "delay",
+        "z": "23e9aa8649696eec",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 600,
+        "y": 380,
+        "wires": [
+            [
+                "61eee6a04e247917"
+            ]
+        ]
+    },
+    {
+        "id": "9e923559b1562075",
+        "type": "function",
+        "z": "23e9aa8649696eec",
+        "name": "function 7",
+        "func": "if(global.get(\"foutecode\")) {\n\n}\nelse {\n    return msg;\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 660,
+        "wires": [
+            [
+                "574ef551be337391"
+            ]
+        ]
+    },
+    {
+        "id": "ce1b8674face71bd",
+        "type": "function",
+        "z": "23e9aa8649696eec",
+        "name": "function 8",
+        "func": "if(!global.get(\"foutecode\")) {\n\n}\nelse {\n    return msg;\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 680,
+        "wires": [
+            [
+                "5f1b4774be01ca52"
+            ]
+        ]
+    },
+    {
+        "id": "b618eb4c277440fd",
+        "type": "function",
+        "z": "23e9aa8649696eec",
+        "g": "08957a2d8ea491d8",
+        "name": "return 0",
+        "func": "msg.payload = \"\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1580,
+        "y": 700,
+        "wires": [
+            [
+                "42040651511fe8fd"
+            ]
+        ]
+    },
+    {
+        "id": "42040651511fe8fd",
+        "type": "delay",
+        "z": "23e9aa8649696eec",
+        "g": "08957a2d8ea491d8",
+        "name": "reset info code after 15 sec",
+        "pauseType": "delay",
+        "timeout": "15",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1820,
+        "y": 700,
+        "wires": [
+            [
+                "2d413eebc65b31b1"
+            ]
+        ]
+    },
+    {
+        "id": "999e52b60b2695a6",
+        "type": "ui_spacer",
+        "z": "23e9aa8649696eec",
+        "name": "spacer",
+        "group": "c81472527479036c",
+        "order": 2,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "c139a550b0335ad1",
+        "type": "mqtt-broker",
+        "name": "Mosquitto (10.42.0.1)",
+        "broker": "localhost",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "51ccaa608b3719c2",
+        "type": "ui_group",
+        "name": "Code",
+        "tab": "20330cbf83a1f417",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "c81472527479036c",
+        "type": "ui_group",
+        "name": "Escape Game",
+        "tab": "1426d5bcef501489",
+        "order": 1,
+        "disp": false,
+        "width": "12",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "0df0ffa2a3c003a7",
+        "type": "ui_group",
+        "name": "Spel controle",
+        "tab": "20330cbf83a1f417",
+        "order": 2,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "f012d9f3b34b7bc0",
+        "type": "ui_group",
+        "name": "Log",
+        "tab": "20330cbf83a1f417",
+        "order": 3,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "20330cbf83a1f417",
+        "type": "ui_tab",
+        "name": "Escape Game Admin",
+        "icon": "fa-lock",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "1426d5bcef501489",
+        "type": "ui_tab",
+        "name": "Escape Game",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "c0a4244cac5222c1",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-dashboard": "3.6.6",
+            "node-red-contrib-countdown": "1.3.2"
+        }
+    }
+]
